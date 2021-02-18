@@ -80,6 +80,7 @@ function startPrompt() {
 const viewAll = (table) => {
   const query = `SELECT * FROM ${table}`;
   connection.query(query, (err, res) => {
+    if (err) throw err;
     console.table(res);
 
     startPrompt();
@@ -97,11 +98,11 @@ const addNewDepartment = () => {
 
   inquier.prompt(questions)
   .then(response => {
-    // console.log(response.name);
-    const query = "INSERT INTO department (name) VALUES ('test')";
-    // const query = `INSERT INTO department (name) VALUES (${response.name})`;
-    connection.query(query, (err, res) => {
-      console.table(res);
+    // const query = "INSERT INTO department (name) VALUES ('test')";
+    const query = `INSERT INTO department (name) VALUES (?)`;
+    connection.query(query, [response.name], (err, res) => {
+      if (err) throw err;
+
       startPrompt();
     });
   })
