@@ -27,14 +27,20 @@ function startPrompt() {
     type: "list",
     name: "action",
     message: "what would you like to do?",
-    choices: ["View all employees", "View all roles", "View all departments", "add an employee", "add a role", "add a department", "update role for an employee", "update employee's manager", "view employees by manager", "delete a department", "delete a role", "delete an employee", "View the total utilized budget of a department"]
+    choices: ["View all employees", "View all roles", "View all departments", "add an employee", "add a role", "add a department", "update role for an employee", "update employee's manager", "view employees by manager", "delete a department", "delete a role", "delete an employee", "View the total utilized budget of a department", "quit"]
   }]
   
   inquier.prompt(startQuestion)
   .then(response => {
     switch (response.action) {
       case "View all employees":
-        viewAllEmployee();
+        viewAll("EMPLOYEE");
+        break;
+      case "View all roles":
+        viewAll("ROLE");
+        break;
+      case "View all departments":
+        viewAll("department");
         break;
       case "add an employee":
         let questions = [
@@ -58,6 +64,8 @@ function startPrompt() {
         ]
   
         break;
+      default:
+        connection.end();
     }
   })
   .catch(err => {
@@ -66,9 +74,12 @@ function startPrompt() {
 }
 
 
-const viewAllEmployee = () => {
-  const query = 'SELECT * FROM EMPLOYEE';
+const viewAll = (table) => {
+  const query = `SELECT * FROM ${table}`;
   connection.query(query, (err, res) => {
     console.table(res);
+
+    startPrompt();
   });
 };
+
