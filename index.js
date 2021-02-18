@@ -42,6 +42,9 @@ function startPrompt() {
       case "View all departments":
         viewAll("department");
         break;
+      case "add a department":
+        addNewDepartment();
+        break;
       case "add an employee":
         let questions = [
           {
@@ -83,3 +86,26 @@ const viewAll = (table) => {
   });
 };
 
+const addNewDepartment = () => {
+  let questions = [
+    {
+      type: "input",
+      name: "name",
+      message: "what is the new department name?"
+    }
+  ];
+
+  inquier.prompt(questions)
+  .then(response => {
+    // console.log(response.name);
+    const query = "INSERT INTO department (name) VALUES ('test')";
+    // const query = `INSERT INTO department (name) VALUES (${response.name})`;
+    connection.query(query, (err, res) => {
+      console.table(res);
+      startPrompt();
+    });
+  })
+  .catch(err => {
+    console.error(err);
+  });
+}
