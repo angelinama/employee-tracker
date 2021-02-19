@@ -2,7 +2,6 @@ require('dotenv').config();
 const mysql = require('mysql');
 const inquier = require('inquirer');
 const cTable = require('console.table');
-// const Query = require('./query.js');
 
 const connection = mysql.createConnection({
   host: 'localhost',
