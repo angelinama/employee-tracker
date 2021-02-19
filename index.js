@@ -55,6 +55,9 @@ function startPrompt() {
       case "update role for an employee":
         updateRole();
         break;
+      case "view employees by manager":
+        viewEmployeeByManager();
+        break;
       default:
         connection.end();
     }
@@ -86,7 +89,6 @@ const addNewDepartment = () => {
 
   inquier.prompt(questions)
   .then(response => {
-    // const query = "INSERT INTO department (name) VALUES ('test')";
     const query = `INSERT INTO department (name) VALUES (?)`;
     connection.query(query, [response.name], (err, res) => {
       if (err) throw err;
@@ -268,5 +270,41 @@ const updateRole = () => {
           console.error(err);
         });
       })
+  });
+}
+
+const viewEmployeeByManager =  () => {
+  //get all the employee list 
+  connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
+    if (err) throw err;
+    const employeeChoice = [];
+    emplRes.forEach(({ first_name, last_name, id }) => {
+      employeeChoice.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+     
+    let questions = [
+      {
+        type: "list",
+        name: "manager_id",
+        choices: employeeChoice,
+         message: "whose role do you want to update?"
+      },
+    ]
+  
+    inquier.prompt(questions)
+      .then(response => {
+        const query = `SELECT * FROM EMPLOYEE WHERE manager_id = ?;`;
+        connection.query(query, [response.manager_id], (err, res) => {
+          if (err) throw err;
+          console.table(res);
+          startPrompt();
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      }); 
   });
 }
