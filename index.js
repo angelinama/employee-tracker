@@ -87,7 +87,7 @@ const addNewDepartment = () => {
     const query = `INSERT INTO department (name) VALUES (?)`;
     connection.query(query, [response.name], (err, res) => {
       if (err) throw err;
-
+      console.log("Successfully insert a department at id " + res.insertId);
       startPrompt();
     });
   })
@@ -135,7 +135,7 @@ const addNewRole = () => {
       const query = `INSERT INTO ROLE (title, salary, department_id) VALUES (?)`;
       connection.query(query, [[response.title, response.salary, response.department]], (err, res) => {
         if (err) throw err;
-        console.log(res);
+        console.log("Successfully insert role at id " + res.insertId);
         startPrompt();
       });
     })
