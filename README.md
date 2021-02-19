@@ -42,12 +42,12 @@ So that I can organize and plan my business
 
 ## Usage
 A command-line application that at a minimum allows the user to:
-- Add departments, roles, employees
+- Add departments, roles, employees (one row at a time)
 - View departments, roles, employees
 - Update employee roles
 - Update employee managers
 - View employees by manager
-- Delete departments, roles, and employees
+- Delete departments, roles, and employees (one row at a time)
 ### walkthrough video
 ![employee-tracker](https://user-images.githubusercontent.com/22566791/108454881-16afb300-7222-11eb-8a62-853175a04e0a.gif)
 

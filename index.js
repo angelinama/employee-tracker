@@ -70,6 +70,9 @@ function startPrompt() {
       case "delete an employee":
         deleteEmployee();
         break;
+      case "View the total utilized budget of a department":
+        viewBudget();
+        break;
       default:
         connection.end();
     }
@@ -504,4 +507,8 @@ const deleteEmployee = () => {
       console.error(err);
     });
   });
+};
+
+const viewBudget = () => {
+
 };
