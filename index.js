@@ -58,6 +58,9 @@ function startPrompt() {
       case "view employees by manager":
         viewEmployeeByManager();
         break;
+      case "update employee's manager":
+        updateManager();
+        break;
       default:
         connection.end();
     }
@@ -154,7 +157,12 @@ const addNewEmployee = () => {
   //get all the employee list to make choice of employee's manager
   connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
     if (err) throw err;
-    const employeeChoice = ['None']; //an employee could have no manager
+    const employeeChoice = [
+      {
+        name: 'None',
+        value: 0
+      }
+    ]; //an employee could have no manager
     emplRes.forEach(({ first_name, last_name, id }) => {
       employeeChoice.push({
         name: first_name + " " + last_name,
@@ -201,7 +209,8 @@ const addNewEmployee = () => {
       inquier.prompt(questions)
         .then(response => {
           const query = `INSERT INTO EMPLOYEE (first_name, last_name, role_id, manager_id) VALUES (?)`;
-          connection.query(query, [[response.first_name, response.last_name, response.role_id, response.manager_id]], (err, res) => {
+          let manager_id = response.manager_id !== 0? response.manager_id: null;
+          connection.query(query, [[response.first_name, response.last_name, response.role_id, manager_id]], (err, res) => {
             if (err) throw err;
             console.log("successfully insert employee with id " + res.insertId);
             startPrompt();
@@ -277,7 +286,10 @@ const viewEmployeeByManager =  () => {
   //get all the employee list 
   connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
     if (err) throw err;
-    const employeeChoice = [];
+    const employeeChoice = [{
+      name: 'None',
+      value: 0
+    }];
     emplRes.forEach(({ first_name, last_name, id }) => {
       employeeChoice.push({
         name: first_name + " " + last_name,
@@ -296,7 +308,13 @@ const viewEmployeeByManager =  () => {
   
     inquier.prompt(questions)
       .then(response => {
-        const query = `SELECT * FROM EMPLOYEE WHERE manager_id = ?;`;
+        let manager_id, query;
+        if (response.manager_id) {
+          query = `SELECT * FROM EMPLOYEE WHERE manager_id = ?;`;
+        } else {
+          manager_id = null;
+          query = `SELECT * FROM EMPLOYEE WHERE manager_id is null;`;
+        }
         connection.query(query, [response.manager_id], (err, res) => {
           if (err) throw err;
           console.table(res);
@@ -308,3 +326,62 @@ const viewEmployeeByManager =  () => {
       }); 
   });
 }
+
+const updateManager = ()=> {
+  //get all the employee list 
+  connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
+    if (err) throw err;
+    const employeeChoice = [];
+    emplRes.forEach(({ first_name, last_name, id }) => {
+      employeeChoice.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+    
+    const managerChoice = [{
+      name: 'None',
+      value: 0
+    }]; //an employee could have no manager
+    emplRes.forEach(({ first_name, last_name, id }) => {
+      managerChoice.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+     
+    let questions = [
+      {
+        type: "list",
+        name: "id",
+        choices: employeeChoice,
+        message: "who do you want to update?"
+      },
+      {
+        type: "list",
+        name: "manager_id",
+        choices: managerChoice,
+        message: "whos is the employee's new manager?"
+      }
+    ]
+  
+    inquier.prompt(questions)
+      .then(response => {
+        const query = `UPDATE EMPLOYEE SET ? WHERE id = ?;`;
+        let manager_id = response.manager_id !== 0? response.manager_id: null;
+        connection.query(query, [
+          {manager_id: manager_id},
+          response.id
+        ], (err, res) => {
+          if (err) throw err;
+            
+          console.log(res.message);
+          startPrompt();
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  })
+  
+};
