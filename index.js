@@ -531,7 +531,7 @@ const viewBudget = () => {
 
     inquier.prompt(questions)
     .then(response => {
-      const query = `SELECT SUM(salary) AS budget FROM
+      const query = `SELECT D.name, SUM(salary) AS budget FROM
       EMPLOYEE AS E LEFT JOIN ROLE AS R
       ON E.role_id = R.id
       LEFT JOIN DEPARTMENT AS D
