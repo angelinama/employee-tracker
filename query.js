@@ -1,19 +1,10 @@
+//TODO containing functions for performing specific SQL queries you'll need to use. Could a constructor function or a class be helpful for organizing these?
 class Query {
-  constructor(params) {
-    this.params = params;
+  constructor(connection) {
+    this.connection = connection;
   }
 
-  // findSongByArtist(artist) {
-  //   console.log('Selecting songs by artist...\n');
-  //   connection.query(`SELECT * FROM TOP5000 WHERE artist="${artist}"`, (err, res) => {
-  //     if (err) throw err;
-  //     console.table(res);
-  //     connection.end();
-  //   });
-  // };
-getAllEmployee() {
-  const query = 'SELECT * FROM EMPLOYEE';
-}
+
 }
 
 module.exports = Query;
