@@ -336,10 +336,20 @@ const viewEmployeeByManager =  () => {
       .then(response => {
         let manager_id, query;
         if (response.manager_id) {
-          query = `SELECT * FROM EMPLOYEE WHERE manager_id = ?;`;
+          query = `SELECT E.id AS id, E.first_name AS first_name, E.last_name AS last_name, 
+          R.title AS role, D.name AS department, CONCAT(M.first_name, " ", M.last_name) AS manager
+          FROM EMPLOYEE AS E LEFT JOIN ROLE AS R ON E.role_id = R.id
+          LEFT JOIN DEPARTMENT AS D ON R.department_id = D.id
+          LEFT JOIN EMPLOYEE AS M ON E.manager_id = M.id
+          WHERE E.manager_id = ?;`;
         } else {
           manager_id = null;
-          query = `SELECT * FROM EMPLOYEE WHERE manager_id is null;`;
+          query = `SELECT E.id AS id, E.first_name AS first_name, E.last_name AS last_name, 
+          R.title AS role, D.name AS department, CONCAT(M.first_name, " ", M.last_name) AS manager
+          FROM EMPLOYEE AS E LEFT JOIN ROLE AS R ON E.role_id = R.id
+          LEFT JOIN DEPARTMENT AS D ON R.department_id = D.id
+          LEFT JOIN EMPLOYEE AS M ON E.manager_id = M.id
+          WHERE E.manager_id is null;`;
         }
         connection.query(query, [response.manager_id], (err, res) => {
           if (err) throw err;
