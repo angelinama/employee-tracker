@@ -2,6 +2,7 @@ require('dotenv').config();
 const mysql = require('mysql');
 const inquier = require('inquirer');
 const cTable = require('console.table');
+const figlet = require('figlet');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -15,11 +16,15 @@ const connection = mysql.createConnection({
 connection.connect((err) => {
   if (err) throw err;
   console.log(`connected as id ${connection.threadId}\n`);
-  startPrompt();
-  
+  figlet('Employee tracker', function(err, data) {
+    if (err) {
+      console.log('ascii art not loaded');
+    } else {
+      console.log(data);
+    }  
+    startPrompt();
+  });
 });
-
-//TODO  generate a start ascii art when start running
 
 function startPrompt() {
   const startQuestion = [{
@@ -121,7 +126,7 @@ const addNewDepartment = () => {
     const query = `INSERT INTO department (name) VALUES (?)`;
     connection.query(query, [response.name], (err, res) => {
       if (err) throw err;
-      console.log("Successfully insert a department at id " + res.insertId);
+      console.log(`Successfully inserted ${response.name} department at id ${res.insertId}`);
       startPrompt();
     });
   })
@@ -169,7 +174,7 @@ const addNewRole = () => {
       const query = `INSERT INTO ROLE (title, salary, department_id) VALUES (?)`;
       connection.query(query, [[response.title, response.salary, response.department]], (err, res) => {
         if (err) throw err;
-        console.log("Successfully insert role at id " + res.insertId);
+        console.log(`Successfully inserted ${response.title} role at id ${res.insertId}`);
         startPrompt();
       });
     })
@@ -238,7 +243,7 @@ const addNewEmployee = () => {
           let manager_id = response.manager_id !== 0? response.manager_id: null;
           connection.query(query, [[response.first_name, response.last_name, response.role_id, manager_id]], (err, res) => {
             if (err) throw err;
-            console.log("successfully insert employee with id " + res.insertId);
+            console.log(`successfully inserted employee ${response.first_name} ${response.last_name} with id ${res.insertId}`);
             startPrompt();
           });
         })
@@ -297,7 +302,7 @@ const updateRole = () => {
           ], (err, res) => {
             if (err) throw err;
             
-            console.log(res.message);
+            console.log("successfully updated employee's role!");
             startPrompt();
           });
         })
@@ -411,7 +416,7 @@ const updateManager = ()=> {
         ], (err, res) => {
           if (err) throw err;
             
-          console.log(res.message);
+          console.log("successfully updated employee's manager");
           startPrompt();
         });
       })
